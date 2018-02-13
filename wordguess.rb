@@ -24,7 +24,6 @@ class GameBehaviors
 
   def initialize (word)
     @word = word
-    #@word_array = @word.instance_variable_get(:@word_array)
     @guess_counter = 5
     @picture = [
       " ,d88b.d88b, ",
@@ -33,14 +32,12 @@ class GameBehaviors
       "   `Y888Y'   ",
       "     `Y'     "]
     @guess_status = []
-    #@word_length = word_length #update
   end
 
   def update_guess_counter(true_false)
     @guess_counter -= 1 if true_false == false
     return @guess_counter
   end
-
 
   def create_underscores
     word_length = @word.instance_variable_get(:@word_array).length
@@ -53,7 +50,6 @@ class GameBehaviors
   end
 
   def replace_underscores (user_guess,word)
-
     array = @word.instance_variable_get(:@word_array)
     indexes_to_replace = array.each_with_index.map {|letter,i| letter == user_guess ? i : nil }.compact
     indexes_to_replace.each do |index|
@@ -64,18 +60,29 @@ class GameBehaviors
   end
 
   def print_ascii_art
-    # heart = [
-    #   " ,d88b.d88b, ",
-    #   " 88888888888 ",
-    #   " `Y8888888Y' ",
-    #   "   `Y888Y'   ",
-    #   "     `Y'     "]
-      @picture.each do |line|
-        @guess_counter.times do
-          print line
-        end
-        print "\n"
+    @picture.each do |line|
+      @guess_counter.times do
+        print line
       end
+      print "\n"
+    end
+  end
+
+  #
+  def win_or_lose
+    status = @guess_status.include?("_ ")
+    #puts "\nSTATUS before loop"
+    #puts status.inspect
+    #puts "\nGUESS COUNTER before loop"
+    #puts @guess_counter.inspect
+    if status == false
+      puts "Congratulations! You won, will you be my valentine?"
+      exit
+    elsif status == true && @guess_counter == 0
+      puts "Oh no! You lost, but the chocolate is discounted."
+      exit
+    end
+    return status
   end
 
 end
@@ -90,7 +97,6 @@ def choose_word (word_dictionary)
 end
 # end regular functions
 
-
 # start body
 
 #intro
@@ -101,7 +107,7 @@ puts "Start by choosing your first letter\n\n"
 
 #create instance of Word
 current_word = choose_word(word_dictionary)
-puts current_word
+puts "\n" + current_word + "\n"
 secret_word = Word.new(current_word)
 
 #create instance of GameBehaviors
@@ -109,43 +115,46 @@ game = GameBehaviors.new(secret_word)
 
 update_guess_counter = "placeholder"
 
+counter = 1
+
 until update_guess_counter == 0
-
-  counter = 1
-
   #place art
-  game.print_ascii_art
-  puts "\n"
 
-  if counter = 1
+  #get used guess and re-print
+  if counter == 1
+
+    game.print_ascii_art
+    puts "\n"
+
     underscores = game.create_underscores
-    game.replace_underscores(user_guess, secret_word)
+
+    puts "\n\nChoose a letter: "
+    user_guess = gets.chomp
+    until user_guess =~ /^[a-zA-Z]$/
+      puts "Sorry, thats not a letter. Try again: "
+      user_guess = gets.chomp
+    end
+  else
+
+    game.print_ascii_art
+    puts "\n"
+
+    puts game.replace_underscores(user_guess, secret_word)
+
+    game_over = game.win_or_lose()
+
+    puts "\n\nChoose a letter: "
+    user_guess = gets.chomp
+    
+    until user_guess =~ /^[a-zA-Z]$/
+      puts "Sorry, thats not a letter. Try again: "
+      user_guess = gets.chomp
+    end
+
   end
-
-
-  #user input
-  puts "\n\n\nChoose a letter: "
-  user_guess = gets.chomp
-
-
+puts "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n"
   true_false = secret_word.compare_letter_to_word(user_guess)
-  updated_guess_counter = game.update_guess_counter(true_false)
+  game.update_guess_counter(true_false)
   counter += 1
+
 end
-
-#game.replace_underscores(user_guess,secret_word)
-
-
-
-
-# puts secret_word.compare_letter_to_word(user_guess)
-# game_one = GameBehaviors.new(secret_word)
-#
-# puts game_one.update_guess_counter(true_false).inspect
-#
-# game_one.create_underscores
-# puts "\n"
-# game_one.print_ascii_art
-#
-# print game_one.replace_underscores(user_guess,secret_word)
-# # end body
