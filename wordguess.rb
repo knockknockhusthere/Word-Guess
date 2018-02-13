@@ -16,7 +16,6 @@ class Word
     @all_guesses << guessed_letter
     @word_array.include?(guessed_letter)
   end
-
 end
 # end of word class
 
@@ -25,12 +24,23 @@ class GameBehaviors
 
   def initialize (word)
     @word = word
-#@word_array = @word.instance_variable_get(:@word_array)
+    #@word_array = @word.instance_variable_get(:@word_array)
     @guess_counter = 5
-    @picture = []
+    @picture = [
+      " ,d88b.d88b, ",
+      " 88888888888 ",
+      " `Y8888888Y' ",
+      "   `Y888Y'   ",
+      "     `Y'     "]
     @guess_status = []
     #@word_length = word_length #update
   end
+
+  def update_guess_counter(true_false)
+    @guess_counter -= 1 if true_false == false
+    return @guess_counter
+  end
+
 
   def create_underscores
     word_length = @word.instance_variable_get(:@word_array).length
@@ -54,23 +64,22 @@ class GameBehaviors
   end
 
   def print_ascii_art
-    heart = [
-      " ,d88b.d88b, ",
-      " 88888888888 ",
-      " `Y8888888Y' ",
-      "   `Y888Y'   ",
-      "     `Y'     "]
-      heart.each do |line|
+    # heart = [
+    #   " ,d88b.d88b, ",
+    #   " 88888888888 ",
+    #   " `Y8888888Y' ",
+    #   "   `Y888Y'   ",
+    #   "     `Y'     "]
+      @picture.each do |line|
         @guess_counter.times do
           print line
         end
         print "\n"
       end
-
   end
+
 end
 # end of game behaviors class
-
 
 # start regular functions
 def choose_word (word_dictionary)
@@ -84,23 +93,59 @@ end
 
 # start body
 
-puts "Choose a letter: "
-user_guess = gets.chomp
+#intro
+puts "Welcome to Val's Word Guess!\n\n"
+puts "In this game, you will guess the letters for a hidden word."
+puts "Careful though! One heart will disappear each time you guess incorrectly.\n\n"
+puts "Start by choosing your first letter\n\n"
 
-#current word is the param for word_one (word they want to guess)
+#create instance of Word
 current_word = choose_word(word_dictionary)
 puts current_word
+secret_word = Word.new(current_word)
+
+#create instance of GameBehaviors
+game = GameBehaviors.new(secret_word)
+
+update_guess_counter = "placeholder"
+
+until update_guess_counter == 0
+
+  counter = 1
+
+  #place art
+  game.print_ascii_art
+  puts "\n"
+
+  if counter = 1
+    underscores = game.create_underscores
+    game.replace_underscores(user_guess, secret_word)
+  end
+
+
+  #user input
+  puts "\n\n\nChoose a letter: "
+  user_guess = gets.chomp
+
+
+  true_false = secret_word.compare_letter_to_word(user_guess)
+  updated_guess_counter = game.update_guess_counter(true_false)
+  counter += 1
+end
+
+#game.replace_underscores(user_guess,secret_word)
 
 
 
-#word_one is object form of current_word (is array)
-word_one = Word.new(current_word)
-puts word_one.compare_letter_to_word(user_guess)
-game_one = GameBehaviors.new(word_one)
 
-game_one.create_underscores
-puts "\n"
-game_one.print_ascii_art
-
-print game_one.replace_underscores(user_guess,word_one)
-# end body
+# puts secret_word.compare_letter_to_word(user_guess)
+# game_one = GameBehaviors.new(secret_word)
+#
+# puts game_one.update_guess_counter(true_false).inspect
+#
+# game_one.create_underscores
+# puts "\n"
+# game_one.print_ascii_art
+#
+# print game_one.replace_underscores(user_guess,secret_word)
+# # end body
