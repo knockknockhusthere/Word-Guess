@@ -7,7 +7,7 @@ class Word
 
   def initialize (current_word)
     @word_array = current_word.split("")
-    @all_guesses = []
+    @all_guesses = [] #do we need this?
   end
 
   # store guessed letter into an array
@@ -23,19 +23,27 @@ end
 # start of game behaviors class
 class GameBehaviors
 
-  def initialize (word)
+  def initialize (word,word_length)
     @word = word
     @guess_counter = 5
     @picture = []
     @guess_status = []
-    @word_length = 0
+    @word_length = word_length
   end
 
-  def underscores
+  def create_underscores
     @word_length.times do
-      @guess_status << "__ "
+      @guess_status << "_ "
     end
+    print_underscore = @guess_status.join("")
+    print print_underscore
     return @guess_status
+  end
+
+  def replace_underscores (user_guess,word)
+    puts "HERE"
+    array = @word.instance_variable_get(:@word_array)
+    array.each_with_index.map {|letter,i| letter == user_guess ? i : nil }.compact
   end
 
   def print_ascii_art
@@ -71,16 +79,20 @@ end
 puts "Choose a letter: "
 user_guess = gets.chomp
 
-
+#current word is the param for word_one (word they want to guess)
 current_word = choose_word(word_dictionary)
 puts current_word
 
 word_length = current_word.length
 
+#word_one is object form of current_word (is array)
 word_one = Word.new(current_word)
 puts word_one.compare_letter_to_word(user_guess)
-game_one = GameBehaviors.new(word_one)
+game_one = GameBehaviors.new(word_one,word_length)
 
-puts game_one.underscores
- game_one.print_ascii_art
+game_one.create_underscores
+puts "\n"
+game_one.print_ascii_art
+
+puts game_one.replace_underscores(user_guess,word_one)
 # end body
