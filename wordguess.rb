@@ -1,4 +1,4 @@
-word_dictionary = ["apple", "banana", "oranges", "pineapple", "avocado"]
+word_dictionary = ["valentine","cupid","heart","love","flowers","chocolate", "february", "roses", "sweetheart", "gifts", "dancing", "celebrate", "suitors", "forever", "promise", "flirt", "affection"]
 
 # start of word class
 class Word
@@ -25,20 +25,33 @@ class GameBehaviors
 
   def initialize (word)
     @word = word
-    @guess_counter = 8
+    @guess_counter = 5
     @picture = []
     @guess_status = []
-  end
-
-  def word_length
-    word_length = @word.length
+    @word_length = 0
   end
 
   def underscores
     @word_length.times do
       @guess_status << "__ "
     end
-    return guess_status
+    return @guess_status
+  end
+
+  def print_ascii_art
+    heart = [
+      " ,d88b.d88b, ",
+      " 88888888888 ",
+      " `Y8888888Y' ",
+      "   `Y888Y'   ",
+      "     `Y'     "]
+      heart.each do |line|
+        @guess_counter.times do
+          print line
+        end
+        print "\n"
+      end
+
   end
 end
 # end of game behaviors class
@@ -67,5 +80,7 @@ word_length = current_word.length
 word_one = Word.new(current_word)
 puts word_one.compare_letter_to_word(user_guess)
 game_one = GameBehaviors.new(word_one)
-puts game_one.word_length
+
+puts game_one.underscores
+ game_one.print_ascii_art
 # end body
