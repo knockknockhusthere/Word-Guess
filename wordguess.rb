@@ -1,5 +1,5 @@
-word_dictionary = ["valentine","cupid","heart","love","flowers","chocolate", "february", "roses", "sweetheart", "gifts", "dancing", "celebrate", "suitors", "forever", "promise", "flirt", "affection"]
-
+#word_dictionary = ["valentine","cupid","heart","love","flowers","chocolate", "february", "roses", "sweetheart", "gifts", "dancing", "celebrate", "suitors", "forever", "promise", "flirt", "affection"]
+word_dictionary = ["valentine"]
 # start of word class
 class Word
 
@@ -23,16 +23,18 @@ end
 # start of game behaviors class
 class GameBehaviors
 
-  def initialize (word,word_length)
+  def initialize (word)
     @word = word
+#@word_array = @word.instance_variable_get(:@word_array)
     @guess_counter = 5
     @picture = []
     @guess_status = []
-    @word_length = word_length
+    #@word_length = word_length #update
   end
 
   def create_underscores
-    @word_length.times do
+    word_length = @word.instance_variable_get(:@word_array).length
+    .times do
       @guess_status << "_ "
     end
     print_underscore = @guess_status.join("")
@@ -41,9 +43,14 @@ class GameBehaviors
   end
 
   def replace_underscores (user_guess,word)
-    puts "HERE"
+
     array = @word.instance_variable_get(:@word_array)
-    array.each_with_index.map {|letter,i| letter == user_guess ? i : nil }.compact
+    indexes_to_replace = array.each_with_index.map {|letter,i| letter == user_guess ? i : nil }.compact
+    indexes_to_replace.each do |index|
+      #letter = array[index] # letter that needs to go in place of the _ß
+      @guess_status[index] = user_guess + " "
+    end
+    return @guess_status.join("")
   end
 
   def print_ascii_art
@@ -76,6 +83,7 @@ end
 
 
 # start body
+
 puts "Choose a letter: "
 user_guess = gets.chomp
 
@@ -83,16 +91,16 @@ user_guess = gets.chomp
 current_word = choose_word(word_dictionary)
 puts current_word
 
-word_length = current_word.length
+
 
 #word_one is object form of current_word (is array)
 word_one = Word.new(current_word)
 puts word_one.compare_letter_to_word(user_guess)
-game_one = GameBehaviors.new(word_one,word_length)
+game_one = GameBehaviors.new(word_one)
 
 game_one.create_underscores
 puts "\n"
 game_one.print_ascii_art
 
-puts game_one.replace_underscores(user_guess,word_one)
+print game_one.replace_underscores(user_guess,word_one)
 # end body
