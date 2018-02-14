@@ -1,3 +1,5 @@
+require 'colorize'
+
 #word_dictionary = ["valentine","cupid","heart","love","flowers","chocolate", "february", "roses", "sweetheart", "gifts", "dancing", "celebrate", "suitors", "forever", "promise", "flirt", "affection"]
 word_dictionary = ["valentine"]
 # start of word class
@@ -95,6 +97,16 @@ def choose_word (word_dictionary)
   used_word << word
   return word
 end
+
+def user_choose_letter
+  puts "\n\nChoose a letter: "
+  user_guess = gets.chomp
+  until user_guess =~ /^[a-zA-Z]$/
+    puts "Sorry, thats not a single letter. Try again: "
+    user_guess = gets.chomp
+  end
+  return user_guess
+end
 # end regular functions
 
 # start body
@@ -103,7 +115,7 @@ end
 puts "Welcome to Val's Word Guess!\n\n"
 puts "In this game, you will guess the letters for a hidden word."
 puts "Careful though! One heart will disappear each time you guess incorrectly.\n\n"
-puts "Start by choosing your first letter\n\n"
+puts "Start by choosing your first letter...\n\n"
 
 #create instance of Word
 current_word = choose_word(word_dictionary)
@@ -125,31 +137,19 @@ until update_guess_counter == 0
 
     game.print_ascii_art
     puts "\n"
-
     underscores = game.create_underscores
 
-    puts "\n\nChoose a letter: "
-    user_guess = gets.chomp
-    until user_guess =~ /^[a-zA-Z]$/
-      puts "Sorry, thats not a letter. Try again: "
-      user_guess = gets.chomp
-    end
+    user_guess = user_choose_letter()
   else
 
     game.print_ascii_art
     puts "\n"
-
     puts game.replace_underscores(user_guess, secret_word)
 
     game_over = game.win_or_lose()
-
-    puts "\n\nChoose a letter: "
-    user_guess = gets.chomp
-    
-    until user_guess =~ /^[a-zA-Z]$/
-      puts "Sorry, thats not a letter. Try again: "
-      user_guess = gets.chomp
-    end
+    print "\n\nLetters you've already guessed: "
+    puts secret_word.instance_variable_get(:@all_guesses).join(", ")
+    user_guess = user_choose_letter()
 
   end
 puts "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n"
